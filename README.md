@@ -20,7 +20,6 @@ Features:
 * Supports multiple targets: set `TARGETS=paper1 paper2` instead of `TARGET`.
 * Calculates dependencies sanely.  Detects changes to included .tex and .bib
   files and rebuilds when appropriate.
-* `make view` opens your typeset document.
 * Distills a camera-ready PDF (with fonts embedded): `make distill`
 
 
