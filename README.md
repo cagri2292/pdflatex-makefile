@@ -6,9 +6,8 @@ Fork with revision features removed.
 If your main file is `mypaper.tex`:
 
     $ curl -O https://raw.githubusercontent.com/cagri2292/pdflatex-makefile/master/Makefile.include
-    $ cat > Makefile
-    TARGET=mypaper
-    include Makefile.include
+    $ curl -O https://raw.githubusercontent.com/cagri2292/pdflatex-makefile/master/makefile
+    $ sed -i -- 's/<tname>/myFileName/g' makefile
 
 # Features
 
