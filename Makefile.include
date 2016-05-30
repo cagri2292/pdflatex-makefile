@@ -6,16 +6,12 @@
 ### Recommended usage:
 ###   1. echo 'include Makefile.include' > Makefile
 ###   2. Optional: Edit the Makefile to override $(TARGET)
-###      and anything else (e.g., PDFVIEWER, AFTERALL)
-###   3. $ make snapshot
-###      # pass around a draft...
 ###   4. $ make distill
 ###      # submit the camera-ready version with embedded fonts
 ###
 ### Final result:
 ###   % cat Makefile
 ###   TARGET=mypaper
-###   PDFVIEWER=open -a 'Adobe Acrobat Professional'
 ###   AFTERALL=mypostprocessingstep
 ###   include Makefile.include
 ###
@@ -27,9 +23,6 @@ PDFLATEX	?= pdflatex -halt-on-error -file-line-error
 BIBTEX		?= bibtex
 MAKEGLOSSARIES ?= makeglossaries
 
-## String to find in log to check whether rerun is necessary
-RERUN_PATTERN = Rerun to
-
 ifneq ($(QUIET),)
 PDFLATEX	+= -interaction=batchmode
 ERRFILTER	:= > /dev/null || (egrep ':[[:digit:]]+:' *.log && false)
@@ -37,14 +30,6 @@ BIBTEX		+= -terse
 else
 PDFLATEX	+= -interaction=nonstopmode
 ERRFILTER=
-endif
-
-## Action for 'make view'
-OS=$(shell uname -s)
-ifeq ($(OS),Darwin)
-PDFVIEWER	?= open
-else
-PDFVIEWER	?= xdg-open
 endif
 
 ## Name of the target file, minus .pdf: e.g., TARGET=mypaper causes this
@@ -109,25 +94,11 @@ else ifeq ($(shell svn info >/dev/null && echo USING_SVN),USING_SVN)
 endif
 
 # .PHONY names all targets that aren't filenames
-.PHONY: all clean pdf view snapshot distill distclean
+.PHONY: all clean pdf snapshot distill distclean
 
 all: pdf $(AFTERALL)
 
 pdf: $(PDFTARGETS)
-
-view: $(PDFTARGETS)
-	$(PDFVIEWER) $(PDFTARGETS)
-
-# define a \Revision{} command you can include in your document's preamble.
-# especially useful with e.g. draftfooter.sty or fancyhdr.
-# usage: \input{revision}
-#        ... \Revision{}
-ifneq ($(REVISION),)
-REVDEPS += revision.tex
-revision.tex: $(VCSTURD)
-	/bin/echo '\newcommand{\Revision}'"{$(subst _,\_,$(REVISION))}" > $@
-AUXFILES += revision.aux
-endif
 
 # to generate aux but not pdf from pdflatex, use -draftmode
 %.aux: %.tex $(REVDEPS)
@@ -156,7 +127,7 @@ ifneq ($(strip $(BIBFILES)),)
 	@if egrep -q "undefined (references|citations)" $*.log; then \
 		$(BIBTEX) $* && $(PDFLATEX) $* $(ERRFILTER); fi
 endif
-	@while grep -q "$(RERUN_PATTERN)" $*.log; do \
+	@while grep -q "Rerun to" $*.log; do \
 		$(PDFLATEX) $* $(ERRFILTER); done
 
 DRAFTS := $(PDFTARGETS:.pdf=-$(REVISION).pdf)
