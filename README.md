@@ -7,7 +7,7 @@ If your main file is `mypaper.tex`:
 
     $ curl -O https://raw.githubusercontent.com/cagri2292/pdflatex-makefile/master/Makefile.include
     $ curl -O https://raw.githubusercontent.com/cagri2292/pdflatex-makefile/master/makefile
-    $ sed -i -- 's/<tname>/myFileName/g' makefile
+    $ sed -i -- 's/<tname>/mypaper/g' makefile
 
 # Features
 
